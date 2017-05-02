@@ -154,9 +154,9 @@ func (t *SimpleChaincode) createcontractor(stub shim.ChaincodeStubInterface, arg
 	contractorhourlyrate := strings.ToLower(args[4])
 	
 	str := `{"companyid": "` + companyid + `", "contractorname": "` + contractorname + `", "contractorassignedto": ` + contractorassignedto + `, "contractorid": "` + contractorid + `,"contractorhourlyrate": "` + contractorhourlyrate + `"}`
-	
 	fmt.Println ("contractor parms" + companyid + "::" + contractorname + "::" + contractorassignedto + "::"+ contractorid + "::" + contractorhourlyrate + "::"+ str)
-	err = stub.PutState(companyid, []byte(str))									//store company with id as key
+	
+	err = stub.PutState(companyid, []byte(str))									//store contractor with id as key
 
 	if err != nil {
 		return nil, err
@@ -175,18 +175,16 @@ func (t *SimpleChaincode) createmanager(stub shim.ChaincodeStubInterface, args [
 	}
 
 	companyid := args[0]
-	companyname := strings.ToLower(args[1])
-	companycontact := strings.ToLower(args[2])
-	companybudget := strings.ToLower(args[3])
+	managername := strings.ToLower(args[1])
+	managerID := strings.ToLower(args[2])
+	managerassignedto := strings.ToLower(args[2])
 	
-	str := `{"companyname": "` + companyname + `", "companycontact": "` + companycontact + `", "companybudget": ` + companybudget + `, "companyid": "` + companyid + `"}`
+	str := `{"managername": "` + managername + `", "managerID": "` + managerID + `", "managerassignedto": ` + managerassignedto + `, "companyid": "` + companyid + `"}`
 
-	fmt.Println ("company parms" + companyid + "::" + companyname + "::" + companycontact + "::"+ companybudget + "::" + str)
+	fmt.Println ("manager parms" + companyid + "::" + managername + "::" + managerID + "::"+ managerassignedto + "::" + str)
 	
-	//key = args[0] //rename for funsies
-	//value = args[1]
-	//err = stub.PutState(key, []byte(value)) //write the variable into the chaincode state
-	err = stub.PutState(companyid, []byte(str))									//store company with id as key
+	
+	err = stub.PutState(companyid, []byte(str))									//store manager with id as key
 
 	if err != nil {
 		return nil, err
