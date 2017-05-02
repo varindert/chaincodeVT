@@ -1,151 +1,136 @@
+/*
+Copyright IBM Corp 2016 All Rights Reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+		 http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*/
+
 package main
 
 import (
 	"errors"
 	"fmt"
-	"strings"
-	"encoding/json"
-
 	
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 )
 
-var logger = shim.NewLogger("mylogger")
-
-type SampleChaincode struct {
+// SimpleChaincode example simple Chaincode implementation
+type SimpleChaincode struct {
 }
 
-//custom data models
-type CompanyInfo struct {
-	Companyname string `json:"companyname"`
-	Companycontact  string `json:"companycontact"`
-	Companybudget  int `json:"companybudget"`
-	AssignedRole  string `json:"assignedRole"`
-	CompanyID string `json:"companyid"`
-}
-
-type ContractorInfo struct {
-	Contractorname string `json:"Contractorname"`	
-	Contractorassignedto string `json:"contractorassignedto"`		// assigned to which project
-	ContractorHourlyrate  string `json:"contractorHourlyrate"`
-	AssignedRole  string `json:"assignedRole"`
-	ContractorID string `json:"contractorid"`
-}
-
-
-type ManagerInfo struct {
-	Managername string `json:"Contractorname"`	
-	Managerassignedto string `json:"managerassignedto"`		// assigned to which project
-	AssignedRole  string `json:"assignedRole"`
-	ManagerID string `json:"managerid"`
+type PersonInfo struct {
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
+	City  string `json:"city"`
 }
 
 
 func main() {
-	err := shim.Start(new(SampleChaincode))
+	err := shim.Start(new(SimpleChaincode))
 	if err != nil {
 		fmt.Printf("Error starting Simple chaincode: %s", err)
 	}
 }
 
-
-func (t *SampleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	return nil, nil
-}
-
-
-
-
-// query function entry point
-func (t *SampleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
-	if function == "getcompanyinfo" {
-		return t.GetCompanyInfo(stub, args)
-	}else if function == "read" {
-		return t.read(stub, args)
-	}
-	fmt.Println("Query did not find func: " + function)
-	return nil, nil
-}
-
-// get companyinfo
-func (t *SampleChaincode) GetCompanyInfo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-//func GetCompanyInfo(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	logger.Debug("Entering GetCompanyInfo")
-
-	if len(args) < 1 {
-		logger.Error("Invalid number of arguments")
-		return nil, errors.New("Missing Company ID")
+// Init resets all the things
+func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	if len(args) != 1 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 1")
 	}
 
-	var CompanyID = args[0]
-	bytes, err := stub.GetState(CompanyID)
+	err := stub.PutState("hello_world", []byte(args[0]))
 	if err != nil {
-		logger.Error("Could not fetch company info with id "+CompanyID+" from ledger", err)
 		return nil, err
 	}
-	return bytes, nil
+
+	return nil, nil
 }
 
-
-// Invoke entry point to invoke a chaincode function
-func (t *SampleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+// Invoke isur entry point to invoke a chaincode function
+func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	
 	fmt.Println("invoke is running " + function)
 
 	// Handle different functions
-	 if function == "createcompany" {
-		return CreateCompany(stub, args)
-	}
+	if function == "init" {
+		return t.Init(stub, "init", args)
+	} else if function == "write" {
+		return t.write (stub, args)
+	} else if function == "person" {
+		fmt.Println("inside person if statement")
+		return t.person(stub, args)
+	} 
+
+
 	fmt.Println("invoke did not find func: " + function)
 
 	return nil, errors.New("Received unknown function invocation: " + function)
 }
 
+// Query is our entry point for queries
+func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
+	fmt.Println("query is running " + function)
 
-func CreateCompany(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	logger.Debug("Entering CreateCompany")
-
-	if len(args) < 2 {
-		logger.Error("Invalid number of args")
-		return nil, errors.New("Expected atleast two arguments for create company creation")
+	// Handle different functions
+	if function == "read" { //read a variable
+		return t.read(stub, args)
 	}
+	fmt.Println("query did not find func: " + function)
 
-	var companyId = args[0]
-	//var companyInput = args[1]
-
-	
-
-	companyname := strings.ToLower(args[1])
-	companycontact := strings.ToLower(args[2])
-	companybudget := strings.ToLower(args[3])
-	
-	//var personalInfo CompanyInfo
-	//personalInfo = CompanyInfo{"Varun", "Ojha", 1000, "varun@gmail.com", "9999999999"}
-
-	str := `{"companyname": "` + companyname + `", "companycontact": "` + companycontact + `", "companybudget": ` + companybudget + `, "companyId": "` + companyId + `"}`
-
-	//jsonAsBytes, err := json.Marshal (&personalInfo)
-
-	err := stub.PutState("companyId", []byte(str))
-	if err != nil {
-		logger.Error("Could not save company info to ledger", err)
-		return nil, err
-	}
-
-	//var customEvent = "{eventType: 'loanApplicationCreation', description:" + loanApplicationId + "' Successfully created'}"
-	//err = stub.SetEvent("evtSender", []byte(customEvent))
-	
-	if err != nil {
-		return nil, err
-	}
-	logger.Info("Successfully saved loan application")
-	return nil, nil
-
+	return nil, errors.New("Received unknown function query: " + function)
 }
 
 
+// insert person info
+func (t *SimpleChaincode) person(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var key, value string
+	var err error
+	fmt.Println("running person()")
+
+	if len(args) != 2 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+	}
+
+	key = args[0] //rename for funsies
+	value = args[1]
+	err = stub.PutState(key, []byte(value)) //write the variable into the chaincode state
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+// write - invoke function to write key/value pair
+func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	var key, value string
+	var err error
+	fmt.Println("running write VT..")
+
+	if len(args) != 2 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+	}
+
+	key = args[0] //rename for funsies
+	value = args[1]
+	err = stub.PutState(key, []byte(value)) //write the variable into the chaincode state
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
 // read - query function to read key/value pair
-func (t *SampleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+func (t *SimpleChaincode) read(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var key, jsonResp string
 	var err error
 
@@ -154,15 +139,7 @@ func (t *SampleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
 	}
 
 	key = args[0]
-	//valAsbytes, err := stub.GetState(key)
-	
-	valAsbytes, err := stub.GetState("companyId") 
-	var personalInfo CompanyInfo
-	err = json.Unmarshal(valAsbytes, &personalInfo)
-	
-	//fmt.Println(personalInfo.Firstname)
-
-
+	valAsbytes, err := stub.GetState(key)
 	if err != nil {
 		jsonResp = "{\"Error\":\"Failed to get state for " + key + "\"}"
 		return nil, errors.New(jsonResp)
@@ -170,8 +147,3 @@ func (t *SampleChaincode) read(stub shim.ChaincodeStubInterface, args []string) 
 
 	return valAsbytes, nil
 }
-
-
-
-// rename this file as chaincode_finished, build it and check into github finished branch, this way I don't have to register and quickly test if a company can be created.
-// make post request from postman to test create company and return company
