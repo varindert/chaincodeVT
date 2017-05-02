@@ -87,8 +87,11 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.write (stub, args)
 	} else if function == "createcompany" {
 		return t.createcompany(stub, args)
-	} 
-
+	} else if function == "createcontractor" {
+		return t.createcontractor(stub, args)
+	} else if function == "createmanager" {
+		return t.createmanager(stub, args)
+	}
 
 	fmt.Println("invoke did not find func: " + function)
 
@@ -125,6 +128,58 @@ func (t *SimpleChaincode) createcompany(stub shim.ChaincodeStubInterface, args [
 	companybudget := strings.ToLower(args[3])
 	
 	str := `{"companyname": "` + companyname + `", "companycontact": "` + companycontact + `", "companybudget": ` + companybudget + `, "companyid": "` + companyid + `"}`
+	fmt.Println ("company parms" + companyid + "::" + companyname + "::" + companycontact + "::"+ companybudget + "::" + str)
+	err = stub.PutState(companyid, []byte(str))									//store company with id as key
+
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+// insert contractor info
+func (t *SimpleChaincode) createcontractor(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	//var key, value string
+	var err error
+	fmt.Println("running createcontractor()")
+
+	if len(args) != 4 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 3. name of the key and value to set")
+	}
+
+	companyid := args[0]
+	contractorname := strings.ToLower(args[1])
+	contractorassignedto := strings.ToLower(args[2])
+	contractorid := strings.ToLower(args[3])
+	contractorhourlyrate := strings.ToLower(args[4])
+	
+	str := `{"companyid": "` + companyid + `", "contractorname": "` + contractorname + `", "contractorassignedto": ` + contractorassignedto + `, "contractorid": "` + contractorid + `,"contractorhourlyrate": "` + contractorhourlyrate + `"}`
+	
+	fmt.Println ("contractor parms" + companyid + "::" + contractorname + "::" + contractorassignedto + "::"+ contractorid + "::" + contractorhourlyrate + "::"+ str)
+	err = stub.PutState(companyid, []byte(str))									//store company with id as key
+
+	if err != nil {
+		return nil, err
+	}
+	return nil, nil
+}
+
+// insert manager info
+func (t *SimpleChaincode) createmanager(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+	//var key, value string
+	var err error
+	fmt.Println("running createmanager()")
+
+	if len(args) != 4 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 3. name of the key and value to set")
+	}
+
+	companyid := args[0]
+	companyname := strings.ToLower(args[1])
+	companycontact := strings.ToLower(args[2])
+	companybudget := strings.ToLower(args[3])
+	
+	str := `{"companyname": "` + companyname + `", "companycontact": "` + companycontact + `", "companybudget": ` + companybudget + `, "companyid": "` + companyid + `"}`
 
 	fmt.Println ("company parms" + companyid + "::" + companyname + "::" + companycontact + "::"+ companybudget + "::" + str)
 	
@@ -138,6 +193,8 @@ func (t *SimpleChaincode) createcompany(stub shim.ChaincodeStubInterface, args [
 	}
 	return nil, nil
 }
+
+
 
 // write - invoke function to write key/value pair
 func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
