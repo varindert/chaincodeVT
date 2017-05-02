@@ -19,6 +19,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strings"
 	
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -28,10 +29,28 @@ import (
 type SimpleChaincode struct {
 }
 
-type PersonInfo struct {
-	Firstname string `json:"firstname"`
-	Lastname  string `json:"lastname"`
-	City  string `json:"city"`
+//custom data models
+type CompanyInfo struct {
+	Companyname string `json:"companyname"`
+	Companycontact  string `json:"companycontact"`
+	Companybudget  int `json:"companybudget"`
+	CompanyID string `json:"companyid"`
+}
+
+type ContractorInfo struct {
+	Contractorname string `json:"Contractorname"`	
+	Contractorassignedto string `json:"contractorassignedto"`		// assigned to which project
+	ContractorHourlyrate  string `json:"contractorHourlyrate"`
+	ContractorID string `json:"contractorid"`
+	CompanyID string `json:"companyid"`
+}
+
+
+type ManagerInfo struct {
+	Managername string `json:"Contractorname"`	
+	Managerassignedto string `json:"managerassignedto"`		// assigned to which project
+	ManagerID string `json:"managerid"`
+	CompanyID string `json:"companyid"`
 }
 
 
@@ -66,9 +85,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.Init(stub, "init", args)
 	} else if function == "write" {
 		return t.write (stub, args)
-	} else if function == "person" {
-		fmt.Println("inside person if statement")
-		return t.person(stub, args)
+	} else if function == "createcompany" {
+		return t.createcompany(stub, args)
 	} 
 
 
@@ -91,16 +109,25 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 }
 
 
-// insert person info
-func (t *SimpleChaincode) person(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
+// insert company info
+func (t *SimpleChaincode) createcompany(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var key, value string
 	var err error
-	fmt.Println("running person()")
+	fmt.Println("running createcompany()")
 
-	if len(args) != 2 {
-		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
+	if len(args) != 4 {
+		return nil, errors.New("Incorrect number of arguments. Expecting 3. name of the key and value to set")
 	}
 
+	companyid := args[0]
+	companyname := strings.ToLower(args[1])
+	companycontact := strings.ToLower(args[2])
+	companybudget := strings.ToLower(args[3])
+	
+	str := `{"companyname": "` + companyname + `", "companycontact": "` + companycontact + `", "companybudget": ` + companybudget + `, "companyid": "` + companyid + `"}`
+
+	fmt.Println ("company parms" + companyid + "::" + companyname + "::" + companycontact + "::"+ companybudget + "::" + str)
+	
 	key = args[0] //rename for funsies
 	value = args[1]
 	err = stub.PutState(key, []byte(value)) //write the variable into the chaincode state
@@ -114,7 +141,7 @@ func (t *SimpleChaincode) person(stub shim.ChaincodeStubInterface, args []string
 func (t *SimpleChaincode) write(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
 	var key, value string
 	var err error
-	fmt.Println("running write VT..2")
+	fmt.Println("running write VT..3")
 
 	if len(args) != 2 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 2. name of the key and value to set")
