@@ -143,7 +143,7 @@ func (t *SimpleChaincode) createcontractor(stub shim.ChaincodeStubInterface, arg
 	var err error
 	fmt.Println("running createcontractor()")
 
-	if len(args) != 4 {
+	if len(args) != 5 {
 		return nil, errors.New("Incorrect number of arguments. Expecting 3. name of the key and value to set")
 	}
 
