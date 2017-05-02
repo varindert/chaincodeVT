@@ -111,7 +111,7 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 
 // insert company info
 func (t *SimpleChaincode) createcompany(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
-	var key, value string
+	//var key, value string
 	var err error
 	fmt.Println("running createcompany()")
 
@@ -128,9 +128,11 @@ func (t *SimpleChaincode) createcompany(stub shim.ChaincodeStubInterface, args [
 
 	fmt.Println ("company parms" + companyid + "::" + companyname + "::" + companycontact + "::"+ companybudget + "::" + str)
 	
-	key = args[0] //rename for funsies
-	value = args[1]
-	err = stub.PutState(key, []byte(value)) //write the variable into the chaincode state
+	//key = args[0] //rename for funsies
+	//value = args[1]
+	//err = stub.PutState(key, []byte(value)) //write the variable into the chaincode state
+	err = stub.PutState(companyid, []byte(str))									//store company with id as key
+
 	if err != nil {
 		return nil, err
 	}
