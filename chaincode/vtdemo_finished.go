@@ -148,15 +148,15 @@ func (t *SimpleChaincode) createcontractor(stub shim.ChaincodeStubInterface, arg
 	}
 
 	companyid := args[0]
-	contractorname := strings.ToLower(args[1])
+	contractorname := strings.ToLower(args[1]) 
 	contractorassignedto := strings.ToLower(args[2])
-	contractorid := strings.ToLower(args[3])
+	contractorid := strings.ToLower(args[3])		
 	contractorhourlyrate := strings.ToLower(args[4])
 	
 	str := `{"companyid": "` + companyid + `", "contractorname": "` + contractorname + `", "contractorassignedto": ` + contractorassignedto + `, "contractorid": "` + contractorid + `,"contractorhourlyrate": "` + contractorhourlyrate + `"}`
 	fmt.Println ("contractor parms" + companyid + "::" + contractorname + "::" + contractorassignedto + "::"+ contractorid + "::" + contractorhourlyrate + "::"+ str)
 	
-	err = stub.PutState(companyid, []byte(str))									//store contractor with id as key
+	err = stub.PutState(contractorid, []byte(str))									//store contractor with id as key
 
 	if err != nil {
 		return nil, err
@@ -184,7 +184,7 @@ func (t *SimpleChaincode) createmanager(stub shim.ChaincodeStubInterface, args [
 	fmt.Println ("manager parms" + companyid + "::" + managername + "::" + managerID + "::"+ managerassignedto + "::" + str)
 	
 	
-	err = stub.PutState(companyid, []byte(str))									//store manager with id as key
+	err = stub.PutState(managerID, []byte(str))									//store manager with id as key
 
 	if err != nil {
 		return nil, err
