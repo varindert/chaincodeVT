@@ -154,7 +154,7 @@ func (t *SimpleChaincode) createcompany(stub shim.ChaincodeStubInterface, args [
 	contractorids := strings.ToLower(args[4])
 	taskids := strings.ToLower(args[5])
 	
-	str := `{"companyname": "` + companyname + `", "companycontact": "` + companycontact + `", "companybudget": ` + companybudget + `, "companyid": "` + companyid + `"contractorids": "` + contractorids + `"taskids": "` + taskids + `"}`
+	str := `{"companyname": "` + companyname + `", "companycontact": "` + companycontact + `", "companybudget": ` + companybudget + `", "companyid": "` + companyid + `","contractorids": "` + contractorids + `","taskids": "` + taskids + `"}`
 
 	//fmt.Println ("company parms" + companyid + "::" + companyname + "::" + companycontact + "::"+ companybudget + "::" + contractorids +"::"+ taskids + "::"+ str)
 	
@@ -179,11 +179,11 @@ func (t *SimpleChaincode) createcontractor(stub shim.ChaincodeStubInterface, arg
 
 	contractorid := strings.ToLower(args[0])		
 	contractorname := strings.ToLower(args[1]) 
-	contractorassignedto := strings.ToLower(args[2])
+	contractorassignedto := strings.ToLower(args[2])	// assigned to task
 	contractorhourlyrate := strings.ToLower(args[3])
 	hoursworked := strings.ToLower(args[4])
 	
-	str := `{"contractorname": "` + contractorname + `", "contractorassignedto": ` + contractorassignedto + `, "contractorid": "` + contractorid + `,"contractorhourlyrate": "` + contractorhourlyrate + `"hoursworked": "` + hoursworked + `"}`
+	str := `{"contractorname": "` + contractorname + `", "contractorassignedto": "` + contractorassignedto + `", "contractorid": "` + contractorid + `","contractorhourlyrate": "` + contractorhourlyrate + `","hoursworked": "` + hoursworked + `"}`
 	//fmt.Println ("contractor parms" + companyid + "::" + contractorname + "::" + contractorassignedto + "::"+ contractorid + "::" + contractorhourlyrate + "::"+ str)
 	fmt.Println(str)
 
