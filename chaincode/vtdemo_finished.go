@@ -114,6 +114,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.createcontractor(stub, args)
 	} else if function == "creattask" {
 		return t.creattask(stub, args)
+	} else if function == "write" {
+		return t.write(stub, args)
 	}
 
 	fmt.Println("invoke did not find func: " + function)
@@ -224,7 +226,6 @@ func (t *SimpleChaincode) creattask(stub shim.ChaincodeStubInterface, args []str
 	}
 	return nil, nil
 }
-
 
 // insert manager info
 func (t *SimpleChaincode) createmanager(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
