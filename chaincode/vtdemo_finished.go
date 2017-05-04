@@ -154,7 +154,7 @@ func (t *SimpleChaincode) createcompany(stub shim.ChaincodeStubInterface, args [
 	contractorids := strings.ToLower(args[4])
 	taskids := strings.ToLower(args[5])
 	
-	str := `{"companyname": "` + companyname + `", "companycontact": "` + companycontact + `", "companybudget": ` + companybudget + `", "companyid": "` + companyid + `","contractorids": "` + contractorids + `","taskids": "` + taskids + `"}`
+	str := `{"companyname": "` + companyname + `", "companycontact": "` + companycontact + `", "companybudget": "` + companybudget + `", "companyid": "` + companyid + `","contractorids": "` + contractorids + `","taskids": "` + taskids + `"}`
 
 	//fmt.Println ("company parms" + companyid + "::" + companyname + "::" + companycontact + "::"+ companybudget + "::" + contractorids +"::"+ taskids + "::"+ str)
 	
