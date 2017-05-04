@@ -212,7 +212,7 @@ func (t *SimpleChaincode) creattask(stub shim.ChaincodeStubInterface, args []str
 	managername := strings.ToLower(args[2])
 	estimatedhours := strings.ToLower(args[3])
 	
-	str := `{"taskid": "` + taskid + `", "taskname": "` + taskname + `", "estimatedhours": "` + estimatedhours + `", "managername": ` + managername + `"}`
+	str := `{"taskid": "` + taskid + `", "taskname": "` + taskname + `", "estimatedhours": "` + estimatedhours + `", "managername": "` + managername + `"}`
 
 	fmt.Println(str)
 
