@@ -18,8 +18,7 @@ package main
 
 import (
 	"errors"
-	"fmt"
-	"strings"
+	"fmt"	
 	
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
@@ -148,11 +147,11 @@ func (t *SimpleChaincode) createcompany(stub shim.ChaincodeStubInterface, args [
 	}
 
 	companyid := args[0]
-	companyname := strings.ToLower(args[1])
-	companycontact := strings.ToLower(args[2])
-	companybudget := strings.ToLower(args[3])
-	contractorids := strings.ToLower(args[4])
-	taskids := strings.ToLower(args[5])
+	companyname := args[1]
+	companycontact := args[2]
+	companybudget := args[3]
+	contractorids := args[4]
+	taskids := args[5]
 	
 	str := `{"companyname": "` + companyname + `", "companycontact": "` + companycontact + `", "companybudget": "` + companybudget + `", "companyid": "` + companyid + `","contractorids": "` + contractorids + `","taskids": "` + taskids + `"}`
 
@@ -177,11 +176,11 @@ func (t *SimpleChaincode) createcontractor(stub shim.ChaincodeStubInterface, arg
 		return nil, errors.New("Incorrect number of arguments. Expecting 3. name of the key and value to set")
 	}
 
-	contractorid := strings.ToLower(args[0])		
-	contractorname := strings.ToLower(args[1]) 
-	contractorassignedto := strings.ToLower(args[2])	// assigned to task
-	contractorhourlyrate := strings.ToLower(args[3])
-	hoursworked := strings.ToLower(args[4])
+	contractorid := args[0]
+	contractorname := args[1]
+	contractorassignedto := args[2]	// assigned to task
+	contractorhourlyrate := args[3]
+	hoursworked := args[4]
 	
 	str := `{"contractorname": "` + contractorname + `", "contractorassignedto": "` + contractorassignedto + `", "contractorid": "` + contractorid + `","contractorhourlyrate": "` + contractorhourlyrate + `","hoursworked": "` + hoursworked + `"}`
 	//fmt.Println ("contractor parms" + companyid + "::" + contractorname + "::" + contractorassignedto + "::"+ contractorid + "::" + contractorhourlyrate + "::"+ str)
@@ -208,9 +207,9 @@ func (t *SimpleChaincode) creattask(stub shim.ChaincodeStubInterface, args []str
 	}
 
 	taskid := args[0]
-	taskname := strings.ToLower(args[1])
-	managername := strings.ToLower(args[2])
-	estimatedhours := strings.ToLower(args[3])
+	taskname := args[1]
+	managername := args[2]
+	estimatedhours := args[3]
 	
 	str := `{"taskid": "` + taskid + `", "taskname": "` + taskname + `", "estimatedhours": "` + estimatedhours + `", "managername": "` + managername + `"}`
 
@@ -238,9 +237,9 @@ func (t *SimpleChaincode) createmanager(stub shim.ChaincodeStubInterface, args [
 	}
 
 	companyid := args[0]
-	managername := strings.ToLower(args[1])
-	managerID := strings.ToLower(args[2])
-	managerassignedto := strings.ToLower(args[2])
+	managername := args[1]
+	managerID := args[2]
+	managerassignedto := args[2]
 	
 	str := `{"managername": "` + managername + `", "managerID": "` + managerID + `", "managerassignedto": ` + managerassignedto + `, "companyid": "` + companyid + `"}`
 
